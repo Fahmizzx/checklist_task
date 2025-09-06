@@ -1,0 +1,73 @@
+<table border='2px'><tr >
+								<th class="table-plus" scope="col">#</th>
+								<th scope="col">Jenis Perangkat</th>
+								<th scope="col">Merk</th>
+								<th scope="col">Tipe</th>
+								<th scope="col">Serial No.</th>
+								<th scope="col">No. Asset</th>
+								<th scope="col">Lokasi Perangkat</th>
+								<th scope="col">Status</th>
+								<th scope="col">Catatan</th>
+								
+							</tr>
+            <td class="table-plus">1</td>
+            <td>SERVER</td>
+            <td>HP</td>
+            <td>DL 380 G6</td>
+            <td>1234567890</td>
+            <td>123/ASET/2018</td>
+            <td>RACK 1 DATA CENTER</td>
+            <td>BAIK DAN DIPAKAI</td>
+            <td>Database Server</td>
+            </tr>
+            <td class="table-plus">2</td>
+            <td>UPS</td>
+            <td>APC</td>
+            <td>SURT1000XlLi</td>
+            <td>1234567890</td>
+            <td>123/ASET/2018</td>
+            <td>RACK 2 DATA CENTER</td>
+            <td>BAIK DAN DIPAKAI</td>
+            <td>UPS 1000KVA</td>
+            </tr>
+            <td class="table-plus">3</td>
+            <td>ACCESS POINT</td>
+            <td>UBIQUITY</td>
+            <td>AC LR</td>
+            <td>1234567890</td>
+            <td>123/ASET/2018</td>
+            <td>GKP LT.5 UTARA</td>
+            <td>BAIK DAN DIPAKAI</td>
+            <td>Tidak Ada</td>
+            </tr>
+            <td class="table-plus">4</td>
+            <td>SERVER</td>
+            <td>HP</td>
+            <td>DL 380 G6</td>
+            <td>1234567890</td>
+            <td>123/ASET/2018</td>
+            <td>GUDANG IT</td>
+            <td>BAIK NAMUN TIDAK DIPAKAI</td>
+            <td>Aplikasi Server</td>
+            </tr>
+            <td class="table-plus">5</td>
+            <td>ROUTER</td>
+            <td>MIKROTIK</td>
+            <td>RB-1200</td>
+            <td>1234567890</td>
+            <td>123/ASET/2018</td>
+            <td>GUDANG IT</td>
+            <td>BAIK NAMUN TIDAK DIPAKAI</td>
+            <td>Tidak Ada</td>
+            </tr>
+            <td class="table-plus">6</td>
+            <td>NAS</td>
+            <td>DLINK</td>
+            <td>DNS-343</td>
+            <td>1234567890</td>
+            <td>123/ASET/2018</td>
+            <td>RACK 3 DATA CENTER</td>
+            <td>RUSAK</td>
+            <td>Hardisk Bay Rusak
+</td>
+            </tr></table>

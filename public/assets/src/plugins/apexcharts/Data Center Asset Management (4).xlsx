@@ -1,0 +1,12 @@
+<table border='2px'><tr >
+								<th class="table-plus" scope="col">#</th>
+								<th scope="col">Jenis Perangkat</th>
+								<th scope="col">Merk</th>
+								<th scope="col">Tipe</th>
+								<th scope="col">Serial No.</th>
+								<th scope="col">No. Asset</th>
+								<th scope="col">Lokasi Perangkat</th>
+								<th scope="col">Status</th>
+								<th scope="col">Catatan</th>
+
+							</tr></table>

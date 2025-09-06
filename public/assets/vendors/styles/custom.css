@@ -1,0 +1,48 @@
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Poppins', sans-serif;
+}
+
+body,
+.btn {
+    font-size: 14px;
+}
+
+.sidebar-menu .dropdown-toggle,
+.sidebar-menu .dropdown-toggle:after {
+    font-size: 13px;
+    font-weight: normal;
+}
+
+
+.sidebar-menu .submenu li a {
+    font-size: 13px;
+    left: 30px;
+}
+
+.sidebar-menu .sidebar-small-cap {
+    font-size: 11px;
+    padding: 0 18px 10px;
+    color: lightgray;
+}
+
+.sidebar-menu .dropdown-toggle .micon {
+    font-size: 18px;
+}
+
+.sidebar-menu .dropdown-toggle {
+    padding: 14px 15px 14px 60px;
+}
+
+.sidebar-menu .submenu li a {
+    padding: 12px 15px 12px 60px;
+}
+
+.sidebar-menu .dropdown-divider {
+    margin: 10px 0 20px 0;
+}
