@@ -6,13 +6,13 @@
     <div class="row justify-content-center">
         <div class="col-xl-12 col-lg-12 col-md-12">
             <div class="title mb-5">
-                <h4>Rincian Tugas Checklist Gardener - <?= esc($ruangan) ?></h4>
+                <h4>History Tugas Checklist Gardener</h4>
             </div>
             <div class="card shadow-sm card-flush border-0 mb-5">
                 <div class="card-header align-items-center py-4 gap-2 gap-md-5 justify-content-between">
                     <!-- Tombol Create Pemetaan -->
                     <div class="card-title">
-                        <a href="<?= base_url('/gardener'); ?>" class="btn btn-sm btn-primary ms-4">
+                        <a href="<?= base_url('/dashboard'); ?>" class="btn btn-sm btn-primary ms-4">
                             Kembali
                         </a>
                     </div>
@@ -36,12 +36,13 @@
                             <thead class="bg-light">
                                 <tr class="fw-bold text-center">
                                     <th>No.</th>
+                                    <th>Ruangan</th>
                                     <th>Aktivitas</th>
                                     <th>Standar</th>
                                     <th>Periodik</th>
                                     <th>Waktu</th>
+                                    <th>Waktu Selesai</th>
                                     <th>Status</th>
-                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="text-center">
@@ -49,10 +50,12 @@
                                 <?php foreach ($tasks as $task): ?>
                                     <tr>
                                         <td><?= $no++; ?></td>
+                                        <td><?= esc($task['ruangan']) ?></td>
                                         <td><?= esc($task['aktivitas']) ?></td>
                                         <td><?= esc($task['standar']) ?></td>
                                         <td><?= esc($task['periodik']) ?></td>
                                         <td><?= esc($task['waktu']) ?></td>
+                                        <td><?= esc($task['updated_at']) ?></td>
                                         <td>
                                             <?php if ($task['status'] == 'Selesai'): ?>
                                                 <span class="badge badge-light-success fw-semibold"><?= esc($task['status']) ?></span>
@@ -62,14 +65,6 @@
                                                 <span class="badge badge-light-warning fw-semibold"><?= esc($task['status']) ?></span>
                                             <?php endif; ?>
                                         </td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-warning edit-task"
-                                            data-bs-toggle="modal" data-bs-target="#edit_task"
-                                            data-id_checklist_maintance="<?= $task['id_checklist_maintance']; ?>"
-                                            data-status="<?= esc($task['status']); ?>"
-                                            >
-                                            Edit
-                                        </button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -77,39 +72,7 @@
                         </table>
                     </div>
                 </div>
-
-                
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Edit Status -->
-<div class="modal fade" id="edit_task" tabindex="-1" aria-labelledby="edit_taskLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="edit_taskLabel">Edit Status Task</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="formEditTask">
-                <div class="modal-body">
-                    <input type="hidden" id="id_checklist_maintance" name="id_checklist_maintance">
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
-                        <select class="form-select" id="status" name="status" required>
-                            <option value="">Pilih Status</option>
-                            <option value="Belum Selesai">Belum Selesai</option>
-                            <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
-                            <option value="Selesai">Selesai</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
@@ -178,72 +141,6 @@
     // On document ready
     KTUtil.onDOMContentLoaded(function() {
         KTDatatablesButtons.init();
-    });
-
-    // Handle Edit Task
-    $(document).on('click', '.edit-task', function() {
-        const id = $(this).data('id_checklist_maintance');
-        const status = $(this).data('status');
-        
-        $('#id_checklist_maintance').val(id);
-        $('#status').val(status);
-    });
-
-    // Handle Form Submit
-    $('#formEditTask').on('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = {
-            id_checklist_maintance: $('#id_checklist_maintance').val(),
-            status: $('#status').val()
-        };
-
-        $.ajax({
-            url: '<?= base_url('gardener/update-status-task') ?>',
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                if(response.status === 'success') {
-                    // Tutup modal
-                    $('#edit_task').modal('hide');
-                    
-                    // Tampilkan pesan sukses
-                    Swal.fire({
-                        text: "Status berhasil diperbarui!",
-                        icon: "success",
-                        buttonsStyling: false,
-                        confirmButtonText: "Ok!",
-                        customClass: {
-                            confirmButton: "btn btn-primary"
-                        }
-                    }).then(function() {
-                        // Refresh halaman
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        text: response.message || "Terjadi kesalahan!",
-                        icon: "error",
-                        buttonsStyling: false,
-                        confirmButtonText: "Ok!",
-                        customClass: {
-                            confirmButton: "btn btn-primary"
-                        }
-                    });
-                }
-            },
-            error: function() {
-                Swal.fire({
-                    text: "Terjadi kesalahan!",
-                    icon: "error",
-                    buttonsStyling: false,
-                    confirmButtonText: "Ok!",
-                    customClass: {
-                        confirmButton: "btn btn-primary"
-                    }
-                });
-            }
-        });
     });
 </script>
 

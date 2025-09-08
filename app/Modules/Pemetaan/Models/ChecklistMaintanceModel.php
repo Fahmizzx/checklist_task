@@ -14,7 +14,7 @@ class ChecklistMaintanceModel extends Model
     // protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_ruangan', 'id_aktivitas', 'id_periodik', 'waktu', 'standar', 'created_at', 'updated_at', 'deleted_at'];
+    protected $allowedFields    = ['id_ruangan', 'id_aktivitas', 'id_periodik', 'waktu', 'standar', 'status', 'created_at', 'updated_at', 'deleted_at'];
 
     // Dates
     protected $useTimestamps = false;

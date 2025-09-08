@@ -59,7 +59,7 @@ class PemetaanController extends Controller
         // return view('auth/login', $data);
 
         $data['tb_lokasi']   = $this->lokasiModel->getAll();
-        $data['tb_role']   = $this->roleModel->getAll();
+        $data['tb_role']   = $this->roleModel->where('id_role !=', 5)->findAll();
         $data['tb_periodik']   = $this->periodikModel->getAll();
         $data['tb_ruangan']   = $this->ruanganModel->getAll();
         $data['tb_waktu']   = $this->waktuModel->getAll();
@@ -107,7 +107,8 @@ class PemetaanController extends Controller
         $data['tb_role']   = $this->roleModel->getAll();
         $data['tb_periodik']   = $this->periodikModel->getAll();
         $data['tb_aktivitas']   = $this->aktivitasModel->getAll();
-        $data['tb_ruangan']   = [];
+        $data['tb_ruangan']   = $this->ruanganModel->where('id_lokasi', 4)->findAll();
+        // dd($data);
         return view('\App\Modules\Pemetaan\Views\detail', $data);
     }
 
@@ -171,68 +172,38 @@ class PemetaanController extends Controller
             ])->setStatusCode(422);
         }
 
-        foreach ($aktivitasList as $index => $aktivitas) {
-            if (empty($aktivitas['ruangan'])) {
-                return $this->response->setJSON([
-                    'status' => 'error',
-                    'errors' => ["list_aktivitas.$index.ruangan" => 'Ruangan wajib dipilih.']
-                ])->setStatusCode(422);
-            }
-
-            if (empty($aktivitas['aktivitas'])) {
-                return $this->response->setJSON([
-                    'status' => 'error',
-                    'errors' => ["list_aktivitas.$index.aktivitas" => 'Deskripsi aktivitas wajib diisi.']
-                ])->setStatusCode(422);
-            }
-
-            if (empty($aktivitas['periodik'])) {
-                return $this->response->setJSON([
-                    'status' => 'error',
-                    'errors' => ["list_aktivitas.$index.periodik" => 'Periodik wajib dipilih.']
-                ])->setStatusCode(422);
-            }
-
-            if (empty($aktivitas['standar'])) {
-                return $this->response->setJSON([
-                    'status' => 'error',
-                    'errors' => ["list_aktivitas.$index.standar" => 'Standar wajib diisi.']
-                ])->setStatusCode(422);
-            }
-
-            // Validasi waktu/hari
-            if (empty($aktivitas['list_waktu']) || !is_array($aktivitas['list_waktu'])) {
-                return $this->response->setJSON([
-                    'status' => 'error',
-                    'errors' => ["list_aktivitas.$index.list_waktu" => 'Minimal 1 waktu/hari wajib diisi.']
-                ])->setStatusCode(422);
-            }
-
-            foreach ($aktivitas['list_waktu'] as $waktuIndex => $waktuItem) {
-                if ($aktivitas['periodik'] === "1" && empty($waktuItem['waktu'])) {
-                    return $this->response->setJSON([
-                        'status' => 'error',
-                        'errors' => ["list_aktivitas.$index.list_waktu.$waktuIndex.waktu" => 'Waktu wajib diisi untuk periodik harian.']
-                    ])->setStatusCode(422);
-                }
-
-                if ($aktivitas['periodik'] === "2" && empty($waktuItem['hari'])) {
-                    return $this->response->setJSON([
-                        'status' => 'error',
-                        'errors' => ["list_aktivitas.$index.list_waktu.$waktuIndex.hari" => 'Hari wajib dipilih untuk periodik mingguan.']
-                    ])->setStatusCode(422);
-                }
-            }
-        }
-
         // Proses penyimpanan ke database
         $checklistModel = new ChecklistMaintanceModel();
         $waktuModel = new WaktuModel();
 
+        // var_dump($aktivitasList);
+        // dd($aktivitasList);
+        
+        // $resultAktivitas = $checklistModel->saveAktivitas($aktivitasList['aktivitas']);
+        // $id_aktivitas = $resultAktivitas['id_aktivitas'];
+
+        // $checklistModel->insert([
+        //         'id_ruangan'    => $aktivitasList['ruangan'],
+        //         'id_aktivitas'  => $id_aktivitas,
+        //         'id_periodik'   => $aktivitasList['periodik'],
+        //         'standar'       => $aktivitasList['standar'],
+        //     ]);
+        // $checklistId = $checklistModel->getInsertID();
+
+        // $waktuModel->save([
+        //     'id_checklist_maintance'    => $checklistId,
+        //     'id_periodik'               => $aktivitasList['periodik'],
+        //     'waktu'                     => $aktivitasList['waktu'],
+        //     'id_ruangan'                => $aktivitasList['ruangan'],
+        // ]);
+        
+
         foreach ($aktivitasList as $aktivitas) {
+
             // Simpan aktivitas
             $resultAktivitas = $checklistModel->saveAktivitas($aktivitas['aktivitas']);
             $id_aktivitas = $resultAktivitas['id_aktivitas'];
+
 
             // Simpan checklist maintenance
             $checklistModel->insert([
@@ -240,19 +211,16 @@ class PemetaanController extends Controller
                 'id_aktivitas'  => $id_aktivitas,
                 'id_periodik'   => $aktivitas['periodik'],
                 'standar'       => $aktivitas['standar'],
+                'waktu'         => $aktivitas['waktu'],
             ]);
             $checklistId = $checklistModel->getInsertID();
 
-            // Simpan waktu/hari berdasarkan periodik
-            foreach ($aktivitas['list_waktu'] as $waktuItem) {
-                $waktuModel->save([
-                    'id_checklist_maintance'    => $checklistId,
-                    'id_periodik'               => $aktivitas['periodik'],
-                    'waktu'                     => $aktivitas['periodik'] === "1" ? $waktuItem['waktu'] : null,
-                    'hari'                      => $aktivitas['periodik'] === "2" ? $waktuItem['hari'] : null,
-                    // 'id_ruangan'                => $aktivitas['ruangan'],
-                ]);
-            }
+            $waktuModel->insert([
+                'id_checklist_maintance'    => $checklistId,
+                'id_periodik'               => $aktivitas['periodik'],
+                'waktu'                     => $aktivitas['waktu'],
+                'id_ruangan'                => $aktivitas['ruangan'],
+            ]);
         }
 
         return $this->response->setJSON([
@@ -446,6 +414,9 @@ class PemetaanController extends Controller
         $validation = \Config\Services::validation();
         $post = $this->request->getPost();
 
+        // Debug tanpa menghentikan eksekusi
+        log_message('debug', 'Post data: ' . print_r($post, true));
+
         // Validasi manual
         $errors = [];
 
@@ -488,7 +459,6 @@ class PemetaanController extends Controller
         // Simpan data ke database
         $checklistmaintanceModel = new ChecklistMaintanceModel();
         $waktuModel = new WaktuModel();
-        $ruanganModel = new RuanganModel();
 
         $resultAktivitas = $checklistmaintanceModel->saveAktivitasModal($post['aktivitas']);
         $id_aktivitas = $resultAktivitas['id_aktivitas'];
@@ -509,7 +479,7 @@ class PemetaanController extends Controller
                 'id_checklist_maintance' => $checklistId,
                 'id_periodik'            => $post['periodik'],
                 'waktu'                  => $post['periodik'] === "1" ? $item['waktu'] : null,
-                'hari'                   => $post['periodik'] === "2" ? $item['hari'] : null,
+                // 'hari'                   => $post['periodik'] === "2" ? $item['hari'] : null,
             ]);
         }
 

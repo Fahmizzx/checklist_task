@@ -9,7 +9,7 @@ class WaktuModel extends Model
 {
     protected $table            = 'tb_waktu';
     protected $primaryKey       = 'id_waktu';
-    protected $allowedFields    = ['id_checklist_maintance', 'id_periodik', 'waktu', 'hari', 'created_at', 'updated_at', 'deleted_at'];
+    protected $allowedFields    = ['id_checklist_maintance', 'id_periodik', 'id_ruangan', 'waktu', 'hari', 'created_at', 'updated_at', 'deleted_at'];
     // protected $returnType       = 'object';
 
 

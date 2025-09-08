@@ -146,8 +146,11 @@
                         <!-- Ruangan -->
                         <div class="mb-5">
                             <label class="form-label fw-bold">Ruangan</label>
-                            <select class="form-select form-select-sm" data-control="select2" data-dropdown-parent="#tambah_aktivitas" id="ruangan" name="ruangan">
-                                <option value=""></option>
+                            <select class="form-select form-select-sm" data-dropdown-parent="#tambah_aktivitas" id="ruangan" name="ruangan">
+                                <option value="">Pilih Ruangan</option>
+                                <?php foreach ($tb_ruangan as $ruangan): ?>
+                                    <option value="<?= $ruangan['id_ruangan']; ?>"><?= esc($ruangan['ruangan']); ?></option>
+                                <?php endforeach; ?>
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
@@ -162,7 +165,7 @@
                         <!-- Periodik -->
                         <div class="mb-5">
                             <label class="form-label fw-bold">Periodik</label>
-                            <select class="form-select form-select-sm" name="periodik" id="periodikTambah" data-control="select2" data-dropdown-parent="#tambah_aktivitas">
+                            <select class="form-select form-select-sm" name="periodik" id="periodikTambah" data-dropdown-parent="#tambah_aktivitas">
                                 <option value="">Pilih Periodik</option>
                                 <?php foreach ($tb_periodik as $periodik): ?>
                                     <option value="<?= $periodik['id_periodik']; ?>"><?= esc($periodik['periodik']); ?></option>
@@ -188,7 +191,7 @@
                                         <div class="invalid-feedback"></div>
                                     </div>
                                     <!-- Input hari -->
-                                    <div class="input-group input-group-sm hari-wrapper">
+                                    <!-- <div class="input-group input-group-sm hari-wrapper">
                                         <select class="form-select form-select-sm hari-select" name="hari" style="flex-grow: 1; width: auto;" data-control="select2" data-dropdown-parent="#tambah_aktivitas">
                                             <option value="">Pilih Hari</option>
                                             <option>Senin</option>
@@ -201,7 +204,7 @@
                                         </select>
                                         <button class="btn btn-sm btn-light" data-repeater-create type="button">+</button>
                                         <div class="invalid-feedback"></div>
-                                    </div>
+                                    </div> -->
 
                                     <button class="btn btn-sm btn-danger mt-3" data-repeater-delete type="button">
                                         <i class="la la-trash-o fs-3"></i> Hapus
@@ -353,6 +356,11 @@
     <script>
         "use strict";
 
+        // Pastikan jQuery tersedia
+        if (typeof jQuery === 'undefined') {
+            console.error('jQuery is not loaded');
+        }
+
         // Class definition
         var KTDatatablesButtons = function() {
             var table;
@@ -444,9 +452,14 @@
         }();
 
         // On document ready
-        KTUtil.onDOMContentLoaded(function() {
+        // KTUtil.onDOMContentLoaded(function() {
+        //     KTDatatablesButtons.init();
+        // });
+
+        jQuery(document).ready(function() {
             KTDatatablesButtons.init();
         });
+
 
 
         // fungsi untuk waktu ( tanggal dan jam)
@@ -464,7 +477,7 @@
         }
 
 
-        $(document).ready(function() {
+        jQuery(document).ready(function($) {
             initializeFlatpickr();
 
             $('select[data-control="select2"]').select2();
@@ -609,6 +622,10 @@
         function addData() {
             const form = $('#form-tambahAktivitas');
             const formData = form.serialize();
+            
+            // Debug
+            console.log('Form Data:', formData);
+            console.log('Form Values:', form.serializeArray());
 
             form.find('.is-invalid, .is-valid').removeClass('is-invalid is-valid');
             form.find('.invalid-feedback').remove();
@@ -616,6 +633,9 @@
 
             const id = $('#id_checklist_maintance').val();
             const id_ruangan = $('#id_ruangan_hidden').val();
+
+            console.log("id:", id);
+            console.log("id_ruangan:", id_ruangan);
 
             $.ajax({
                 type: "POST",
@@ -636,6 +656,7 @@
                 },
                 error: function(xhr) {
                     const res = xhr.responseJSON;
+                    console.log('Error response:', res);
                     if (!res || !res.errors) {
                         alertMessage('Terjadi kesalahan tidak terduga.', 'error');
                         return;
@@ -664,7 +685,7 @@
                         }
                     });
 
-                    // alertMessage('Periksa kembali input yang salah.', 'error');
+                    alertMessage('Periksa kembali input yang salah.', 'error');
                 }
             });
         }
@@ -1002,28 +1023,41 @@
 
 
         // hapus data keseluruhan
-        $(document).on('click', '.delete-Pemetaan', function() {
-            var id = $(this).data('id_checklist');
-            var id_ruangan = $(this).data('id_ruangan');
+        // $(document).on('click', '.delete-Pemetaan', function() {
+        //     var id = $(this).data('id_checklist');
+        //     var id_ruangan = $(this).data('id_ruangan');
 
-            $('#confirmation-modal2').modal('show');
-            $('#id_delete').val(id);
-            $('#id_ruangan_delete').val(id_ruangan);
+        //     $('#confirmation-modal2').modal('show');
+        //     $('#id_delete').val(id);
+        //     $('#id_ruangan_delete').val(id_ruangan);
 
+        // });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-Pemetaan')) {
+                const id = e.target.getAttribute('data-id_checklist');
+                const idRuangan = e.target.getAttribute('data-id_ruangan');
+
+                const modal = new bootstrap.Modal(document.getElementById('confirmation-modal2'));
+                modal.show();
+
+                document.getElementById('id_delete').value = id;
+                document.getElementById('id_ruangan_delete').value = idRuangan;
+            }
         });
+
 
         function deletePemetaan() {
             var id = $('#id_delete').val();
             var id_ruangan = $('#id_ruangan_delete').val();
 
+            console.log(id);
+            console.log(id_ruangan);
+
             $.ajax({
-                type: "POST",
+                type: "DELETE",
                 dataType: "html",
                 url: `/pemetaan/deletePemetaan/${id}/${id_ruangan}`,
-                data: {
-                    id,
-                    id_ruangan
-                },
                 success: function(response) {
                     $("#" + id).remove();
                     $("#" + id_ruangan).remove();
@@ -1044,6 +1078,8 @@
         $('#detail-pemetaan').on('click', '.delete-Aktivitas', function() {
             var id = $(this).data('id_checklist_maintance');
 
+            console.log(id);
+
             // Isi input hidden modal sesuai data atribut tombol
             $('#id_delete').val(id);
 
@@ -1054,13 +1090,11 @@
         // Fungsi hapus data tabel di halaman detail
         function deleteAktivitas() {
             var id = $('#id_delete').val();
+            console.log(id);
 
             $.ajax({
-                type: "POST",
+                type: "DELETE",
                 url: `/pemetaan/deleteAktivitas/${id}`,
-                data: {
-                    id
-                },
                 success: function(response) {
                     $("#" + id).remove();
                     $('#id_delete').val("");

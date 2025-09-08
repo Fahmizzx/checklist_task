@@ -102,6 +102,8 @@ $routes->group('gardener', ['filter' => ['auth', 'role:Admin,Gardener'], 'namesp
     $routes->get('checklist_task/(:segment)', 'Task::checklist_task/$1');
     $routes->post('saveChecklist/(:segment)', 'Task::saveChecklist/$1');
     $routes->get('checklist_selesai', 'Task::checklistSelesai');
+    $routes->post('update-status-task', 'Task::updateStatusTask');
+    $routes->get('history-gardener', 'Task::history_task');
 });
 
 // Modules CS 
@@ -116,7 +118,7 @@ $routes->group('cs', ['filter' => ['auth', 'role:Admin,CS'], 'namespace' => 'App
 // Modul Pemetaan
 $routes->group('pemetaan', ['filter' => ['auth', 'role:Admin'], 'namespace' => 'App\Modules\Pemetaan\Controllers'], function ($routes) {
     $routes->get('/', 'PemetaanController::index');
-    $routes->get('create', 'PemetaanController::create');
+    $routes->get('create', 'PemetaanController::create'); 
     $routes->get('detail/(:num)/(:num)', 'PemetaanController::detail/$1/$2');
     $routes->get('edit/(:num)', 'PemetaanController::edit/$1');
     $routes->get('getRuanganByLokasi/(:any)', 'PemetaanController::getRuanganByLokasi/$1');
@@ -125,9 +127,9 @@ $routes->group('pemetaan', ['filter' => ['auth', 'role:Admin'], 'namespace' => '
     $routes->post('pemetaan/update/(:num)', 'PemetaanController::update/$1');
     $routes->post('store', 'PemetaanController::store');
     $routes->post('storeAktivitas/(:num)/(:num)', 'PemetaanController::storeAktivitas/$1/$2');
-    $routes->post('delete/(:num)', 'PemetaanController::delete/$1');
-    $routes->post('deleteAktivitas/(:num)', 'PemetaanController::deleteAktivitas/$1');
-    $routes->post('deletePemetaan/(:num)/(:num)', 'PemetaanController::deletePemetaan/$1/$2');
+    $routes->delete('delete/(:num)', 'PemetaanController::delete/$1');
+    $routes->delete('deleteAktivitas/(:num)', 'PemetaanController::deleteAktivitas/$1');
+    $routes->delete('deletePemetaan/(:num)/(:num)', 'PemetaanController::deletePemetaan/$1/$2');
     $routes->post('update/(:num)', 'PemetaanController::update/$1');
     $routes->post('updateAktivitas/(:num)/(:num)', 'PemetaanController::updateAktivitas/$1/$2');
 });

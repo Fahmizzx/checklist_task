@@ -67,13 +67,10 @@
                                 <div class="card mb-5 shadow-sm">
                                     <div class="card-body">
                                         <div class="mb-2">
-                                            <strong>Nama Ruangan:</strong> <?= esc($ruangan['ruangan']) ?>
-                                        </div>
-                                        <div class="mb-2">
-                                            <strong>Nama Lokasi:</strong> <?= esc($ruangan['nama_lokasi']) ?>
+                                            <strong>Nama Ruangan:</strong> <?= esc($ruangan) ?>
                                         </div>
                                         <div>
-                                            <strong>Role Petugas:</strong> <?= esc($ruangan['role']) ?>
+                                            <strong>Role Petugas:</strong> Gardener
                                         </div>
                                     </div>
                                 </div>

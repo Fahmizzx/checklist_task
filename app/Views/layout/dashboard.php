@@ -19,6 +19,52 @@
     <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
     <!--end::Global Stylesheets Bundle-->
+    
+    <!-- Base jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <!-- Metronic Theme Bundles -->
+    <script src="<?= base_url('assets/plugins/global/plugins.bundle.js') ?>"></script>
+    <script src="<?= base_url('assets/js/scripts.bundle.js') ?>"></script>
+    
+    <!-- jQuery Form Repeater -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
+    
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <!-- Custom Plugins -->
+    <script src="<?= base_url('assets/plugins/custom/datatables/datatables.bundle.js') ?>"></script>
+    
+    <script>
+        // Ensure everything is loaded before initialization
+        $(document).ready(function() {
+            // Check if plugins are loaded
+            if (typeof jQuery === 'undefined') {
+                console.error('jQuery is not loaded');
+                return;
+            }
+            if (typeof jQuery.fn.repeater === 'undefined') {
+                console.error('jQuery Repeater plugin is not loaded');
+                return;
+            }
+            if (typeof jQuery.fn.select2 === 'undefined') {
+                console.error('Select2 plugin is not loaded');
+                return;
+            }
+            
+            // Initialize Select2 for all select elements with data-control="select2"
+            $('select[data-control="select2"]').select2({
+                width: '100%',
+                placeholder: function() {
+                    return $(this).data('placeholder') || 'Pilih opsi';
+                }
+            });
+        });
+    </script>
 </head>
 <!--end::Head-->
 <!--begin::Body-->
@@ -200,11 +246,8 @@
     <!--end::Root-->
     
     <!--begin::Global Javascript Bundle(used by all pages)-->
-    <script src="assets/plugins/global/plugins.bundle.js"></script>
-    <script src="assets/js/scripts.bundle.js"></script>
     <!--end::Global Javascript Bundle-->
     <!--begin::Page Vendors Javascript(used by this page)-->
-    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
     <!--end::Page Vendors Javascript-->
 
     <!-- Bagian untuk skrip kustom dari setiap halaman -->

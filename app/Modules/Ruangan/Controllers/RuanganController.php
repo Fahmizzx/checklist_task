@@ -36,7 +36,6 @@ class RuanganController extends Controller
         $query = $builder->get();
         $data['ruangan'] = $query->getResultArray();
 
-
         $data['lokasi'] = $this->lokasiModel->findAll();
         $data['tb_role'] = $this->roleModel->where('id_role !=', 5)->findAll();
 

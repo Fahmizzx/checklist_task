@@ -101,19 +101,10 @@ use Carbon\Carbon;
                                         </div>
                                     </div>
 
-                                    <!-- Nested Repeater (Waktu) -->
                                     <div class="col-md-4 mt-5">
-                                        <div class="inner-repeater">
-                                            <div data-repeater-list="list_waktu" class="mb-5">
-                                                <!-- Item repeater default -->
-                                                <?php $waktus = $aktivitas['list_waktu'] ?? [[]]; ?>
-                                                <?php foreach ($waktus as $i => $waktu): ?>
-                                                    <div data-repeater-item>
-                                                        <label class="form-label">Waktu / Hari <span class="text-danger">*</span></label>
-
-                                                        <!-- Input waktu (periodik harian) -->
-                                                        <div class="input-group input-group-sm waktu-wrapper">
-                                                            <input type="text" name="waktu" class="form-control form-control-sm waktu <?= isset($errors["list_aktivitas.$index.list_waktu.$i.waktu"]) ? 'is-invalid' : '' ?>" placeholder="Pilih Waktu" value="<?= esc($waktu['waktu'] ?? '') ?>">
+                                        <label class="form-label">Waktu<span class="text-danger">*</span></label>
+                                        <div class="input-group input-group-sm waktu-wrapper">
+                                                            <input type="text" name="waktu" class="form-control form-control-sm waktu <?= isset($errors["list_aktivitas.$index.waktu"]) ? 'is-invalid' : '' ?>" placeholder="Pilih Waktu" value="<?= esc($waktu['waktu'] ?? '') ?>">
                                                             <button class="btn btn-sm btn-light" data-repeater-create type="button">
                                                                 <span class="svg-icon svg-icon-2">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 28 28">
@@ -122,39 +113,8 @@ use Carbon\Carbon;
                                                                 </span>
                                                             </button>
                                                         </div>
-                                                        <?php if (isset($errors["list_aktivitas.$index.list_waktu.$i.waktu"])): ?>
-                                                            <div class="invalid-feedback"><?= $errors["list_aktivitas.$index.list_waktu.$i.waktu"] ?></div>
-                                                        <?php endif; ?>
-
-                                                        <!-- Select hari (periodik mingguan) -->
-                                                        <div class="input-group input-group-sm hari-wrapper mt-2">
-                                                            <select class="form-select form-select-sm hari-select <?= isset($errors["list_aktivitas.$index.list_waktu.$i.hari"]) ? 'is-invalid' : '' ?>" data-control="select2" name="hari" style="flex-grow: 1; width: auto;">
-                                                                <option value="">Pilih Hari</option>
-                                                                <option value="Senin" <?= ($waktu['hari'] ?? '') == 'Senin' ? 'selected' : '' ?>>Senin</option>
-                                                                <option value="Selasa" <?= ($waktu['hari'] ?? '') == 'Selasa' ? 'selected' : '' ?>>Selasa</option>
-                                                                <option value="Rabu" <?= ($waktu['hari'] ?? '') == 'Rabu' ? 'selected' : '' ?>>Rabu</option>
-                                                                <option value="Kamis" <?= ($waktu['hari'] ?? '') == 'Kamis' ? 'selected' : '' ?>>Kamis</option>
-                                                                <option value="Jumat" <?= ($waktu['hari'] ?? '') == 'Jumat' ? 'selected' : '' ?>>Jumat</option>
-                                                                <option value="Sabtu" <?= ($waktu['hari'] ?? '') == 'Sabtu' ? 'selected' : '' ?>>Sabtu</option>
-                                                                <option value="Minggu" <?= ($waktu['hari'] ?? '') == 'Minggu' ? 'selected' : '' ?>>Minggu</option>
-                                                            </select>
-                                                            <button class="btn btn-sm btn-light" data-repeater-create type="button">
-                                                                <span class="svg-icon svg-icon-2">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 28 28">
-                                                                        <path d="M5 12h14M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                                                    </svg>
-                                                                </span>
-                                                            </button>
-                                                        </div>
-                                                        <?php if (isset($errors["list_aktivitas.$index.list_waktu.$i.hari"])): ?>
-                                                            <div class="invalid-feedback"><?= $errors["list_aktivitas.$index.list_waktu.$i.hari"] ?></div>
-                                                        <?php endif; ?>
-
-                                                        <!-- tombol hapus repeater -->
-                                                        <button data-repeater-delete type="button" class="btn btn-danger btn-sm mt-2">Delete</button>
-                                                    </div>
-                                                <?php endforeach; ?>
-                                            </div>
+                                        <div class="invalid-feedback">
+                                            <?= $errors["list_aktivitas.$index.waktu"] ?? '' ?>
                                         </div>
                                     </div>
 
@@ -195,6 +155,84 @@ use Carbon\Carbon;
         // Ambil id_lokasi dari form utama
         const id_lokasi = $('#lokasi').val();
         updateRuangan(id_lokasi);
+        
+        // Inisialisasi Select2 di luar repeater
+        $('select[data-control="select2"]').select2({
+            width: '100%',
+            placeholder: function() {
+                return $(this).data('placeholder') || 'Pilih opsi';
+            }
+        });
+
+        // Inisialisasi Form Repeater
+        $('#aktivitasRepeater').repeater({
+            initEmpty: false,
+            defaultValues: {
+                'text-input': ''
+            },
+            show: function() {
+                $(this).slideDown();
+                
+                // Reinisialisasi Select2 untuk elemen baru
+                $(this).find('select[data-control="select2"]').each(function() {
+                    if (!$(this).data('select2')) {
+                        $(this).select2({
+                            width: '100%',
+                            placeholder: function() {
+                                return $(this).data('placeholder') || 'Pilih opsi';
+                            }
+                        });
+                    }
+                });
+
+                // Inisialisasi nested repeater untuk waktu
+                $(this).find('.inner-repeater').repeater({
+                    initEmpty: false,
+                    defaultValues: {
+                        'text-input': ''
+                    },
+                    show: function() {
+                        $(this).slideDown();
+                        
+                        // Reinisialisasi Select2 untuk elemen baru di nested repeater
+                        $(this).find('select[data-control="select2"]').each(function() {
+                            if (!$(this).data('select2')) {
+                                $(this).select2({
+                                    width: '100%',
+                                    placeholder: function() {
+                                        return $(this).data('placeholder') || 'Pilih opsi';
+                                    }
+                                });
+                            }
+                        });
+
+                        // Update periodik change handler
+                        handlePeriodikChange($(this).closest('[data-repeater-item]'));
+                    },
+                    hide: function(deleteElement) {
+                        $(this).slideUp(deleteElement);
+                    }
+                });
+
+                // Update periodik change handler untuk item baru
+                handlePeriodikChange($(this));
+            },
+            hide: function(deleteElement) {
+                // Destroy Select2 instances before removing element
+                $(this).find('select[data-control="select2"]').each(function() {
+                    if ($(this).data('select2')) {
+                        $(this).select2('destroy');
+                    }
+                });
+                $(this).slideUp(deleteElement);
+            },
+            ready: function() {
+                // Handler untuk item yang sudah ada saat load
+                $('[data-repeater-item]').each(function() {
+                    handlePeriodikChange($(this));
+                });
+            }
+        });
     });
 
 

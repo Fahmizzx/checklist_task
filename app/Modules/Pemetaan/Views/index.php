@@ -401,22 +401,31 @@
 
 
     // hapus data
-    $('#data-pemetaan').on('click', '.deletePemetaan', function() {
-        var id = $(this).data('id_checklist_maintance');
-        $('#confirmation-modal').modal('show');
-        $('#id_delete').val(id);
-    });
+    // $('#data-pemetaan').on('click', '.deletePemetaan', function() {
+    //     var id = $(this).data('id_checklist_maintance');
+    //     $('#confirmation-modal').modal('show');
+    //     $('#id_delete').val(id);
+    // });
+
+    document.getElementById('data-pemetaan').addEventListener('click', function(e) {
+    if (e.target.classList.contains('deletePemetaan')) {
+        const id = e.target.getAttribute('data-id_checklist_maintance');
+
+        const modal = new bootstrap.Modal(document.getElementById('confirmation-modal'));
+        modal.show();
+
+        document.getElementById('id_delete').value = id;
+    }
+});
+
 
     function deleteData() {
         var id = $('#id_delete').val();
 
         $.ajax({
-            type: "POST",
+            type: "DELETE",
             dataType: "html",
             url: `/pemetaan/delete/${id}`,
-            data: {
-                id
-            },
             success: function(response) {
                 $("#" + id).remove();
                 $("#id_delete").val("");
